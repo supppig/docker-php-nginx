@@ -1,5 +1,5 @@
 ARG ALPINE_VERSION=3.19
-FROM alpine:${ALPINE_VERSION}
+FROM arm64v8/alpine:${ALPINE_VERSION}
 LABEL Maintainer="supppig <supppig@163.com>"
 LABEL Description="Lightweight container with Nginx 1.24 & PHP 8.3 based on Alpine Linux."
 # Setup document root
