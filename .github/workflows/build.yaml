@@ -5,11 +5,11 @@ on:
     branches: [ master ]
     tags: ['*']
   pull_request:
-  schedule:
-    - cron: '0 2 * * 6'
+  # schedule:
+  #   - cron: '0 2 * * 6'
 
 env:
-  IMAGE_NAME: trafex/php-nginx
+  IMAGE_NAME: supppig/php-nginx
   IMAGE_TAG: ${{ github.sha }}
   DOCKER_BUILDKIT: 1
 
