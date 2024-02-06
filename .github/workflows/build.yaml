@@ -3,10 +3,10 @@ name: Test & build Docker image
 on:
   watch:
     types: [started]
-  # push:
-  #   branches: [ master ]
-  #   tags: ['*']
-  # pull_request:
+  push:
+    branches: [ master ]
+    tags: ['*']
+  pull_request:
   # schedule:
   #   - cron: '0 2 * * 6'
 
