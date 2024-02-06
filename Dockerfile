@@ -1,5 +1,5 @@
 ARG ALPINE_VERSION=3.19
-FROM arm64v8/alpine:${ALPINE_VERSION}
+FROM alpine:${ALPINE_VERSION}
 LABEL Maintainer="supppig <supppig@163.com>"
 LABEL Description="Lightweight container with Nginx 1.24 & PHP 8.3 based on Alpine Linux."
 # Setup document root
@@ -43,16 +43,17 @@ COPY config/php.ini ${PHP_INI_DIR}/conf.d/custom.ini
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Make sure files/folders needed by the processes are accessable when they run under the nobody user
-RUN chown -R nobody.nobody /var/www/html /run /var/lib/nginx /var/log/nginx
+# RUN chown -R nobody.nobody /var/www/html /run /var/lib/nginx /var/log/nginx
 
 # Create symlink for php
 RUN ln -s /usr/bin/php83 /usr/bin/php
 
 # Switch to use a non-root user from here on
-USER nobody
+# USER nobody
 
 # Add application
-COPY --chown=nobody src/ /var/www/html/
+# COPY --chown=nobody src/ /var/www/html/
+COPY src/ /var/www/html/
 
 # Expose the port nginx is reachable on
 EXPOSE 8080
