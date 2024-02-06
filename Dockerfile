@@ -1,8 +1,14 @@
-ARG ALPINE_VERSION=3.19
+ARG ALPINE_VERSION=3.19.1
 FROM alpine:${ALPINE_VERSION}
 LABEL Maintainer="supppig <supppig@163.com>"
 LABEL Description="Lightweight container with Nginx 1.24 & PHP 8.3 based on Alpine Linux."
 # Setup document root
+
+ENV FTP_USER=foo \
+	FTP_PASS=bar \
+	GID=1000 \
+	UID=1000
+
 WORKDIR /var/www/html
 
 # Install packages and remove default server definition
@@ -27,7 +33,11 @@ RUN apk add --no-cache \
   php83-xml \
   php83-xmlreader \
   php83-xmlwriter \
-  supervisor
+  supervisor \
+  vsftpd==3.0.5-r2
+
+# ftp
+COPY [ "/ftp/vsftpd.conf", "/etc" ]
 
 # Configure nginx - http
 COPY config/nginx.conf /etc/nginx/nginx.conf
@@ -43,13 +53,15 @@ COPY config/php.ini ${PHP_INI_DIR}/conf.d/custom.ini
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Make sure files/folders needed by the processes are accessable when they run under the nobody user
-# RUN chown -R nobody.nobody /var/www/html /run /var/lib/nginx /var/log/nginx
+RUN chown -R nobody.nobody /var/www/html /run /var/lib/nginx /var/log/nginx
+
+COPY /docker-entrypoint.sh /docker-entrypoint.sh
 
 # Create symlink for php
 RUN ln -s /usr/bin/php83 /usr/bin/php
 
 # Switch to use a non-root user from here on
-# USER nobody
+USER nobody
 
 # Add application
 # COPY --chown=nobody src/ /var/www/html/
@@ -57,9 +69,13 @@ COPY src/ /var/www/html/
 
 # Expose the port nginx is reachable on
 EXPOSE 8080
+# ftp
+EXPOSE 8095-8099/tcp
 
 # Let supervisord start nginx & php-fpm
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+#CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
+
 
 # Configure a healthcheck to validate that everything is up&running
 # HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping
