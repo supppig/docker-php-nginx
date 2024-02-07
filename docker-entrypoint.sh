@@ -23,3 +23,5 @@ touch /var/log/xferlog
 tail -f /var/log/xferlog | tee /dev/stdout &
 
 /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+
+tail -f /dev/null
