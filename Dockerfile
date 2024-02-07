@@ -61,11 +61,10 @@ COPY /docker-entrypoint.sh /docker-entrypoint.sh
 RUN ln -s /usr/bin/php83 /usr/bin/php
 
 # Switch to use a non-root user from here on
-USER nobody
+# USER nobody
 
 # Add application
-# COPY --chown=nobody src/ /var/www/html/
-COPY src/ /var/www/html/
+COPY --chown=nobody src/ /var/www/html/
 
 # Expose the port nginx is reachable on
 EXPOSE 8080
